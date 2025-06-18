@@ -1,0 +1,47 @@
+# Vagrant
+.vagrant/
+*.box
+
+# Virtual machine logs and SSH configs
+*.log
+*.pid
+*.retry
+*.swp
+*.swo
+
+# Ansible
+*.retry
+inventory.yml
+host_vars/
+group_vars/
+secrets/
+vault_pass.txt
+
+# SSH keys (be careful with ignoring private keys!)
+*.pem
+*.key
+*.crt
+id_rsa*
+id_dsa*
+
+# Python related (if using virtualenv or scripts)
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+env/
+venv/
+ENV/
+.Python
+pip-log.txt
+
+# YAML lint/IDE backup files
+*.bak
+*~
+
+# System files
+.DS_Store
+Thumbs.db
+
+# VSCode
+.vscode/
