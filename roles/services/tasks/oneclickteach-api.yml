@@ -1,0 +1,15 @@
+---
+
+- name: Pull API image
+  community.docker.docker_image:
+    name: "{{ oneclickteach_api_image }}"
+    source: pull
+
+- name: Run API container
+  community.docker.docker_container:
+    name: "{{ oneclickteach_api_container_name }}"
+    image: "{{ oneclickteach_api_image }}"
+    state: started
+    restart_policy: always
+    ports:
+      - "{{ oneclickteach_api_external_port }}:{{ oneclickteach_api_container_port }}"

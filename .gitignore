@@ -45,3 +45,9 @@ Thumbs.db
 
 # VSCode
 .vscode/
+
+
+.env
+
+
+.Note.md

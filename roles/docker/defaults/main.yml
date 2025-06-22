@@ -1,0 +1,5 @@
+---
+# defaults/main.yml
+
+docker_version: "latest"
+docker_compose_version: "latest"

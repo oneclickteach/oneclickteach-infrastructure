@@ -4,6 +4,9 @@ Infrastructure-as-code repository containing Ansible playbooks, Terraform config
 
 
 ## 
+
+```bash
 vagrant up
 vagrant reload --provision
 vagrant destroy
+```
