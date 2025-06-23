@@ -1,6 +1,11 @@
 ---
 # handlers/main.yml
 
+- name: reload systemd
+  become: true
+  command: systemctl daemon-reload
+  listen: reload systemd
+
 - name: restart docker
   become: true
   service:

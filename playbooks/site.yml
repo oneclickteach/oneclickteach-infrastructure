@@ -5,7 +5,13 @@
   gather_facts: true
   roles:
     - role: common
+      vars:
+        http_proxy: "{{ proxy.http_proxy }}"
+        https_proxy: "{{ proxy.https_proxy }}"
     - role: docker
+      vars:
+        http_proxy: "{{ proxy.http_proxy }}"
+        https_proxy: "{{ proxy.https_proxy }}"
     - role: services
       vars:
         oneclickteach_api_image: "{{ oneclickteach_api.image }}"

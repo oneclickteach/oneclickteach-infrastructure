@@ -35,6 +35,25 @@
     name: docker-ce
     state: present
 
+- name: Create Docker systemd override directory
+  become: true
+  file:
+    path: /etc/systemd/system/docker.service.d
+    state: directory
+    mode: '0755'
+
+- name: Configure Docker daemon proxy
+  become: true
+  copy:
+    dest: /etc/systemd/system/docker.service.d/http-proxy.conf
+    content: |
+      [Service]
+      Environment="HTTP_PROXY={{ http_proxy }}" "HTTPS_PROXY={{ https_proxy }}"
+    mode: '0644'
+  notify:
+    - reload systemd
+    - restart docker
+
 - name: Get latest Docker Compose version
   shell: curl -s https://api.github.com/repos/docker/compose/releases/latest | jq -r .tag_name
   register: compose_version

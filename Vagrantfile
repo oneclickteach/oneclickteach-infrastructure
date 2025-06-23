@@ -24,6 +24,8 @@ def provision(vm, role, node_num)
     ansible.inventory_path = "inventory.yml"
     ansible.extra_vars = {
       var1: "value1"
+      # http_proxy: "http://127.0.0.1:2280",
+      # https_proxy: "http://127.0.0.1:2280"
     }
   end
 end
