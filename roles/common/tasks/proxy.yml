@@ -1,0 +1,29 @@
+---
+# tasks/proxy.yml
+
+- name: Add proxy to /etc/environment
+  become: true
+  lineinfile:
+    path: /etc/environment
+    line: '{{ item }}'
+    create: yes
+  loop:
+    - "http_proxy={{ http_proxy }}"
+    - "https_proxy={{ https_proxy }}"
+  when: proxy_is_enabled | bool
+
+- name: Set APT proxy
+  copy:
+    dest: /etc/apt/apt.conf.d/95proxies
+    content: |
+      Acquire::http::Proxy "{{ http_proxy }}";
+      Acquire::https::Proxy "{{ https_proxy }}";
+  when:
+    - ansible_os_family == 'Debian'
+    - proxy_is_enabled | bool
+
+- name: Print proxy
+  ansible.builtin.debug:
+    msg: "HTTP proxy is {{ http_proxy }} and HTTP proxy is {{ https_proxy }}"
+  when: proxy_is_enabled | bool
+

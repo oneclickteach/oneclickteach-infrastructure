@@ -1,0 +1,18 @@
+---
+# tasks/essential.yml
+
+- name: Update apt cache
+  apt:
+    update_cache: yes
+  when: ansible_os_family == 'Debian'
+
+- name: Install essential packages
+  apt:
+    name:
+      - python3-pip
+      - python3-venv
+      - git
+      - curl
+      - vim
+    state: present
+  when: ansible_os_family == 'Debian'

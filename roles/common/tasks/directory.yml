@@ -1,0 +1,10 @@
+---
+# tasks/directory.yml
+
+- name: Create project directory
+  file:
+    path: /opt/oneclickteach
+    state: directory
+    mode: '0755'
+    owner: root
+    group: root

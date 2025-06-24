@@ -6,10 +6,12 @@
   roles:
     - role: common
       vars:
+        proxy_is_enabled: "{{ proxy.is_enabled }}"
         http_proxy: "{{ proxy.http_proxy }}"
         https_proxy: "{{ proxy.https_proxy }}"
     - role: docker
       vars:
+        proxy_is_enabled: "{{ proxy.is_enabled }}"
         http_proxy: "{{ proxy.http_proxy }}"
         https_proxy: "{{ proxy.https_proxy }}"
     - role: services

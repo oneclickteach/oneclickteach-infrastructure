@@ -1,48 +1,6 @@
 ---
 # tasks/main.yml
 
-- name: Add proxy to /etc/environment
-  become: true
-  lineinfile:
-    path: /etc/environment
-    line: '{{ item }}'
-    create: yes
-  loop:
-    - "http_proxy={{ http_proxy }}"
-    - "https_proxy={{ https_proxy }}"
-
-- name: Set APT proxy
-  copy:
-    dest: /etc/apt/apt.conf.d/95proxies
-    content: |
-      Acquire::http::Proxy "{{ http_proxy }}";
-      Acquire::https::Proxy "{{ https_proxy }}";
-  when: ansible_os_family == 'Debian'
-
-- name: Print proxy
-  ansible.builtin.debug:
-    msg: "HTTP proxy is {{ http_proxy }}"
-
-- name: Update apt cache
-  apt:
-    update_cache: yes
-  when: ansible_os_family == 'Debian'
-
-- name: Install essential packages
-  apt:
-    name:
-      - python3-pip
-      - python3-venv
-      - git
-      - curl
-      - vim
-    state: present
-  when: ansible_os_family == 'Debian'
-
-- name: Create project directory
-  file:
-    path: /opt/oneclickteach
-    state: directory
-    mode: '0755'
-    owner: root
-    group: root
+- include_tasks: tasks/proxy.yml
+- include_tasks: tasks/essential.yml
+- include_tasks: tasks/directory.yml

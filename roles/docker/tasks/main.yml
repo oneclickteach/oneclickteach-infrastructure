@@ -53,6 +53,7 @@
   notify:
     - reload systemd
     - restart docker
+  when: proxy_is_enabled | bool
 
 - name: Get latest Docker Compose version
   shell: curl -s https://api.github.com/repos/docker/compose/releases/latest | jq -r .tag_name
