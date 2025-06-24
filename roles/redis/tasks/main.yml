@@ -1,0 +1,27 @@
+---
+# tasks/main.yml
+
+- name: Ensure Redis data directory exists
+  become: true
+  file:
+    path: "{{ redis_data_path }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Run Redis container
+  become: true
+  docker_container:
+    name: "{{ redis_container_name }}"
+    image: "{{ redis_image }}"
+    restart_policy: always
+    networks:
+      - name: "{{ docker_network_name }}"
+    ports:
+      - "{{ redis_external_port }}:{{ redis_container_port }}"
+    volumes:
+      - "{{ redis_data_path }}:/data"
+    command: >
+      redis-server --requirepass "{{ redis_password }}" --appendonly yes
+    state: started

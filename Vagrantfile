@@ -35,11 +35,13 @@ Vagrant.configure("2") do |config|
   config.vm.provider "libvirt" do |v|
     v.cpus = NODE_CPUS
     v.memory = NODE_MEMORY
+    config.vm.network "forwarded_port", guest: 3000, host: 3000, auto_correct: true
   end
   config.vm.provider "virtualbox" do |v|
     v.cpus = NODE_CPUS
     v.memory = NODE_MEMORY
     v.linked_clone = true
+    config.vm.network "forwarded_port", guest: 3000, host: 3000, auto_correct: true
   end
   
   NODE_ROLES.each_with_index do |name, i|

@@ -3,20 +3,40 @@
   hosts: all
   become: true
   gather_facts: true
+  vars:
+    proxy_is_enabled: "{{ proxy.is_enabled }}"
+    http_proxy: "{{ proxy.http_proxy }}"
+    https_proxy: "{{ proxy.https_proxy }}"
+    docker_network_name: "{{ docker.network_name }}"
   roles:
     - role: common
-      vars:
-        proxy_is_enabled: "{{ proxy.is_enabled }}"
-        http_proxy: "{{ proxy.http_proxy }}"
-        https_proxy: "{{ proxy.https_proxy }}"
+
     - role: docker
+
+    - role: redis
       vars:
-        proxy_is_enabled: "{{ proxy.is_enabled }}"
-        http_proxy: "{{ proxy.http_proxy }}"
-        https_proxy: "{{ proxy.https_proxy }}"
+        redis_image: "{{ redis.image }}"
+        redis_container_name: "{{ redis.container_name }}"
+        redis_container_port: "{{ redis.container_port }}"
+        redis_external_port: "{{ redis.external_port }}"
+        redis_password: "{{ redis.password }}"
+        redis_data_path: "{{ redis.data_path }}"
+    
+    - role: postgresql
+      vars:
+        postgres_image: "{{ postgresql.image }}"
+        postgres_container_name: "{{ postgresql.container_name }}"
+        postgres_container_port: "{{ postgresql.container_port }}"
+        postgres_external_port: "{{ postgresql.external_port }}"
+        postgres_user: "{{ postgresql.user }}"
+        postgres_password: "{{ postgresql.password }}"
+        postgres_db: "{{ postgresql.db }}"
+        postgres_data_path: "{{ postgresql.data_path }}"
+
     - role: services
       vars:
         oneclickteach_api_image: "{{ oneclickteach_api.image }}"
         oneclickteach_api_container_name: "{{ oneclickteach_api.container_name }}"
         oneclickteach_api_container_port: "{{ oneclickteach_api.container_port }}"
         oneclickteach_api_external_port: "{{ oneclickteach_api.external_port }}"
+        oneclickteach_api_environments: "{{ oneclickteach_api.environments }}"

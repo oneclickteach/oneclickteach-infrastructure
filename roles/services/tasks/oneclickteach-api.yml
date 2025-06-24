@@ -11,5 +11,27 @@
     image: "{{ oneclickteach_api_image }}"
     state: started
     restart_policy: always
+    networks:
+      - name: "{{ docker_network_name }}"
     ports:
       - "{{ oneclickteach_api_external_port }}:{{ oneclickteach_api_container_port }}"
+    env:
+      REDIS_CACHE_TTL_GLOBAL: "{{ oneclickteach_api_environments.REDIS_CACHE_TTL_GLOBAL }}"
+      REDIS_HOST: "{{ oneclickteach_api_environments.REDIS_HOST }}"
+      REDIS_PORT: "{{ oneclickteach_api_environments.REDIS_PORT }}"
+      REDIS_PASSWORD: "{{ oneclickteach_api_environments.REDIS_PASSWORD }}"
+      REDIS_CACHE_KEY_PREFIX: "{{ oneclickteach_api_environments.REDIS_CACHE_KEY_PREFIX }}"
+      POSTGRES_USER: "{{ oneclickteach_api_environments.DATABASE_USER }}"
+      POSTGRES_PASSWORD: "{{ oneclickteach_api_environments.DATABASE_PASSWORD }}"
+      DATABASE_HOST: "{{ oneclickteach_api_environments.DATABASE_HOST }}"
+      DATABASE_PORT: "{{ oneclickteach_api_environments.DATABASE_PORT }}"
+      DATABASE_USER: "{{ oneclickteach_api_environments.DATABASE_USER }}"
+      DATABASE_PASSWORD: "{{ oneclickteach_api_environments.DATABASE_PASSWORD }}"
+      DATABASE_NAME: "{{ oneclickteach_api_environments.DATABASE_NAME }}"
+      DATABASE_SYNCHRONIZE: "{{ oneclickteach_api_environments.DATABASE_SYNCHRONIZE }}"
+      DATABASE_AUTO_LOAD_ENTITIES: "{{ oneclickteach_api_environments.DATABASE_AUTO_LOAD_ENTITIES }}"
+      JWT_SECRET: "{{ oneclickteach_api_environments.JWT_SECRET }}"
+      JWT_EXPIRATION: "{{ oneclickteach_api_environments.JWT_EXPIRATION }}"
+      CORS_ORIGINS: "{{ oneclickteach_api_environments.CORS_ORIGINS }}"
+      SWAGGER_SERVER_HOST: "{{ oneclickteach_api_environments.SWAGGER_SERVER_HOST }}"
+      LOG_LEVEL: "{{ oneclickteach_api_environments.LOG_LEVEL }}"

@@ -1,0 +1,9 @@
+---
+# defaults/main.yml
+
+redis_image: "redis:7.2"
+redis_container_name: "redis"
+redis_container_port: 6379
+redis_external_port: 6379
+redis_password: "changeme"
+redis_data_path: "/opt/redis/data"

@@ -1,0 +1,11 @@
+---
+# defaults/main.yml
+
+postgres_image: "postgres:16"
+postgres_container_name: "postgres"
+postgres_container_port: 5432
+postgres_external_port: 5432
+postgres_user: "oneclickteach"
+postgres_password: "changeme"
+postgres_db: "oneclickteach"
+postgres_data_path: "/opt/postgres/data"
