@@ -1,0 +1,20 @@
+---
+
+- name: Pull API image
+  community.docker.docker_image:
+    name: "{{ oneclickteach_web_image }}"
+    source: pull
+
+- name: Run API container
+  community.docker.docker_container:
+    name: "{{ oneclickteach_web_container_name }}"
+    image: "{{ oneclickteach_web_image }}"
+    state: started
+    restart_policy: always
+    networks:
+      - name: "{{ docker_network_name }}"
+    ports:
+      - "{{ oneclickteach_web_external_port }}:{{ oneclickteach_web_container_port }}"
+    env:
+      API_BASE_URL: "{{ oneclickteach_web_environments.API_BASE_URL }}"
+      BASE_URL: "{{ oneclickteach_web_environments.BASE_URL }}"

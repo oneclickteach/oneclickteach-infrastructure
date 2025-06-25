@@ -40,3 +40,8 @@
         oneclickteach_api_container_port: "{{ oneclickteach_api.container_port }}"
         oneclickteach_api_external_port: "{{ oneclickteach_api.external_port }}"
         oneclickteach_api_environments: "{{ oneclickteach_api.environments }}"
+        oneclickteach_web_image: "{{ oneclickteach_web.image }}"
+        oneclickteach_web_container_name: "{{ oneclickteach_web.container_name }}"
+        oneclickteach_web_container_port: "{{ oneclickteach_web.container_port }}"
+        oneclickteach_web_external_port: "{{ oneclickteach_web.external_port }}"
+        oneclickteach_web_environments: "{{ oneclickteach_web.environments }}"
