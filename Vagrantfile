@@ -1,26 +1,56 @@
 # ENV['VAGRANT_NO_PARALLEL'] = 'no'
-NODE_ROLES = ["server-0"]
-NODE_BOXES = ['generic/ubuntu2004']
+NODE_ROLE = "server"
+NODE_BOX = 'generic/ubuntu2004'
 NODE_CPUS = 2
 NODE_MEMORY = 2048
 # Virtualbox >= 6.1.28 require `/etc/vbox/network.conf` for expanded private networks 
-# NETWORK_PREFIX = "10.10.10"
-NETWORK_PREFIX = "192.168.56"
+# NODE_IP = "10.10.10.100"
+NODE_IP = "192.168.56.100"
+# SSH_PORT=2220
 
-def provision(vm, role, node_num)
-  vm.box = NODE_BOXES[node_num]
+SSH_KEY_DIR = File.expand_path(".keys", __dir__)
+Dir.mkdir(SSH_KEY_DIR) unless Dir.exist?(SSH_KEY_DIR)
+
+SSH_KEY_NAME = "id_rsa_vagrant"
+SSH_PRIVATE_KEY_PATH = File.join(SSH_KEY_DIR, SSH_KEY_NAME)
+SSH_PUBLIC_KEY_PATH = "#{SSH_PRIVATE_KEY_PATH}.pub"
+
+# Generate SSH key on the host if it doesn't exist
+unless File.exist?(SSH_PRIVATE_KEY_PATH) && File.exist?(SSH_PUBLIC_KEY_PATH)
+  puts "Generating SSH keypair at #{SSH_PRIVATE_KEY_PATH}"
+  system("ssh-keygen -t rsa -b 2048 -f #{SSH_PRIVATE_KEY_PATH} -N ''")
+end
+
+def provision(vm, role)
+  vm.box = NODE_BOX
   vm.hostname = role
-  # We use a private network because the default IPs are dynamically assigned 
-  # during provisioning. This makes it impossible to know the server-0 IP when 
-  # provisioning subsequent servers and agents. A private network allows us to
-  # assign static IPs to each node, and thus provide a known IP for the API endpoint.
-  node_ip = "#{NETWORK_PREFIX}.#{100+node_num}"
-  # An expanded netmask is required to allow VM<-->VM communication, virtualbox defaults to /32
-  vm.network "private_network", ip: node_ip, netmask: "255.255.255.0"
+  vm.network "private_network", ip: NODE_IP, netmask: "255.255.255.0"
+
+  # Upload public key BEFORE changing anything
+  vm.provision "file", source: SSH_PUBLIC_KEY_PATH, destination: "/home/vagrant/temp_key.pub"
+
+  # Inject SSH key
+  vm.provision "shell", inline: <<-SHELL
+    mkdir -p /home/vagrant/.ssh
+    cat /home/vagrant/temp_key.pub >> /home/vagrant/.ssh/authorized_keys
+    chmod 600 /home/vagrant/.ssh/authorized_keys
+    chown -R vagrant:vagrant /home/vagrant/.ssh
+  SHELL
+
+  # Change SSH port and restart
+  # vm.provision "shell", privileged: true, inline: <<-SHELL
+  #   sudo sed -i 's/^#Port 22/Port #{SSH_PORT}/' /etc/ssh/sshd_config
+  #   sudo systemctl restart ssh
+  # SHELL
+
+  # vm.network "forwarded_port", guest: 22, host: SSH_PORT, auto_correct: true
+  vm.network "forwarded_port", guest: 3000, host: 3000, auto_correct: true
+  vm.network "forwarded_port", guest: 3001, host: 3001, auto_correct: true
 
   vm.provision "ansible", run: 'once' do |ansible|
     ansible.compatibility_mode = "2.0"
     ansible.playbook = "playbooks/site.yml"
+    # ansible.playbook = "playbooks/check_connection.yml"
     ansible.inventory_path = "inventory.yml"
     ansible.extra_vars = {
       var1: "value1"
@@ -35,21 +65,15 @@ Vagrant.configure("2") do |config|
   config.vm.provider "libvirt" do |v|
     v.cpus = NODE_CPUS
     v.memory = NODE_MEMORY
-    config.vm.network "forwarded_port", guest: 3000, host: 3000, auto_correct: true
-    config.vm.network "forwarded_port", guest: 3001, host: 3001, auto_correct: true
   end
   config.vm.provider "virtualbox" do |v|
     v.cpus = NODE_CPUS
     v.memory = NODE_MEMORY
     v.linked_clone = true
-    config.vm.network "forwarded_port", guest: 3000, host: 3000, auto_correct: true
-    config.vm.network "forwarded_port", guest: 3001, host: 3001, auto_correct: true
   end
   
-  NODE_ROLES.each_with_index do |name, i|
-    config.vm.define name do |node|
-      provision(node.vm, name, i)
-    end
+  config.vm.define NODE_ROLE do |node|
+    provision(node.vm, NODE_ROLE)
   end
 
 end

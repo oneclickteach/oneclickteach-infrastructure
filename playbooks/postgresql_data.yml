@@ -1,0 +1,11 @@
+- name: Seed database data
+  hosts: all
+  become: true
+  roles:
+    - role: postgresql_data
+      vars:
+        postgres_host: "{{ ansible_host }}"
+        postgres_port: "{{ postgresql.external_port }}"
+        postgres_user: "{{ postgresql.user }}"
+        postgres_password: "{{ postgresql.password }}"
+        postgres_db: "{{ postgresql.db }}"

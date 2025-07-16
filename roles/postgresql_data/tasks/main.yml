@@ -1,0 +1,28 @@
+---
+# tasks/main.yml
+
+- name: Ensure PostgreSQL client is installed (Debian/Ubuntu)
+  apt:
+    name: postgresql-client
+    state: present
+  become: true
+
+- name: Ensure psycopg2 is installed
+  pip:
+    name: psycopg2-binary
+  become: true
+
+- name: Copy seed SQL file to remote host
+  copy:
+    src: files/seed.sql
+    dest: /tmp/seed.sql
+    mode: '0644'
+
+- name: Read SQL seed file and execute it
+  community.postgresql.postgresql_query:
+    db: "{{ postgres_db }}"
+    query: "{{ lookup('file', role_path + '/files/seed.sql') }}"
+    login_user: "{{ postgres_user }}"
+    login_password: "{{ postgres_password }}"
+    login_host: "{{ postgres_host }}"
+    login_port: "{{ postgres_port }}"

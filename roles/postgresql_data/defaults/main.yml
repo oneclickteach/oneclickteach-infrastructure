@@ -1,0 +1,8 @@
+---
+# defaults/main.yml
+
+postgres_user: "oneclickteach"
+postgres_password: "changeme"
+postgres_db: "oneclickteach"
+postgres_host: localhost
+postgres_port: 5432
