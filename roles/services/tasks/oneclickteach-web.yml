@@ -1,5 +1,22 @@
 ---
 
+- name: Ensure runtime config directory exists
+  ansible.builtin.file:
+    path: "{{ oneclickteach_web.runtime_config_path | dirname }}"
+    state: directory
+    mode: '0755'
+
+- name: Create runtime-config.json from environments
+  ansible.builtin.copy:
+    dest: "{{ oneclickteach_web.runtime_config_path }}"
+    content: |
+      {
+        {% for key, value in oneclickteach_web.environments.items() %}
+        "{{ key }}": "{{ value | string }}"{% if not loop.last %},{% endif %}
+        {% endfor %}
+      }
+    mode: '0644'
+
 - name: Pull API image
   community.docker.docker_image:
     name: "{{ oneclickteach_web_image }}"
@@ -18,3 +35,5 @@
     env:
       API_BASE_URL: "{{ oneclickteach_web_environments.API_BASE_URL }}"
       BASE_URL: "{{ oneclickteach_web_environments.BASE_URL }}"
+    volumes:
+      - "{{ oneclickteach_web.runtime_config_path }}:/app/public/runtime-config.json:ro"
