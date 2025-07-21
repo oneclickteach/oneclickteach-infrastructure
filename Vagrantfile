@@ -46,7 +46,7 @@ def provision(vm, role)
   # vm.network "forwarded_port", guest: 22, host: SSH_PORT, auto_correct: true
   vm.network "forwarded_port", guest: 4000, host: 4000, auto_correct: true
   vm.network "forwarded_port", guest: 4001, host: 4001, auto_correct: true
-  vm.network "forwarded_port", guest: 5432, host: 55432, auto_correct: true
+  vm.network "forwarded_port", guest: 5432, host: 45432, auto_correct: true
 
   vm.provision "ansible", run: 'once' do |ansible|
     ansible.compatibility_mode = "2.0"
